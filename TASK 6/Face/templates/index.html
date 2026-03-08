@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Face Profiling</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(135deg,#6a11cb,#2575fc);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+}
+
+.container{
+background:white;
+padding:40px;
+border-radius:12px;
+width:420px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+input[type="file"]{
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+padding:10px 20px;
+background:#2575fc;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1b5fd1;
+}
+
+.result{
+margin-top:20px;
+font-weight:bold;
+color:#2575fc;
+}
+
+.error{
+margin-top:20px;
+font-weight:bold;
+color:red;
+}
+
+img{
+margin-top:20px;
+width:200px;
+border-radius:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>AI Face Profiling System</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+<input type="file" name="image" accept="image/*" required>
+<br>
+<button type="submit">Analyze Face</button>
+
+</form>
+
+{% if image_filename %}
+<img src="{{ url_for('static', filename='uploads/' + image_filename) }}">
+{% endif %}
+
+{% if result %}
+  {% if "Error" in result or "No face" in result %}
+    <div class="error">{{ result }}</div>
+  {% else %}
+    <div class="result">{{ result }}</div>
+  {% endif %}
+{% endif %}
+
+</div>
+
+</body>
+</html>
