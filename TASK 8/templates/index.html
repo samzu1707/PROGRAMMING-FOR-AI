@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NASA Space Explorer</title>
+
+<style>
+body{
+    font-family: Arial;
+    text-align:center;
+    background:black;
+    color:white;
+}
+
+img{
+    width:60%;
+    border-radius:10px;
+}
+
+button{
+    padding:10px 20px;
+    font-size:16px;
+    background:orange;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🚀 NASA Astronomy Picture</h1>
+
+<h2 id="title">{{data.title}}</h2>
+
+<img id="image" src="{{data.url}}">
+
+<p id="desc">{{data.explanation}}</p>
+
+<button onclick="loadNew()">Load New Space Image</button>
+
+<script>
+
+function loadNew(){
+
+fetch("/get_data")
+.then(response => response.json())
+.then(data => {
+
+document.getElementById("title").innerText = data.title;
+document.getElementById("image").src = data.url;
+document.getElementById("desc").innerText = data.explanation;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
