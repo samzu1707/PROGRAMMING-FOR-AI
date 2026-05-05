@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deen Ki Duniya - Religious Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="chat-wrapper">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-content">
+                <div class="avatar">
+                    <span class="logo-icon">☪</span>
+                </div>
+                <div class="header-text">
+                    <h2>Deen Ki Duniya</h2>
+                    <span class="tagline">World of Faith & Beliefs</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="chat-box">
+            <div class="message bot-message">
+                <p><span class="bot-emoji"></span><br>Welcome to <b>Deen Ki Duniya</b> (World of Religion)!<br><br>Ask me anything about world religions - Islam, Christianity, Hinduism, Buddhism, Judaism, Sikhism, and more.</p>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator" style="display: none;">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ask about any religion..." autocomplete="off">
+            <button onclick="sendMessage()" class="send-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendMessage() {
+    let input = document.getElementById("user-input");
+    let msg = input.value.trim();
+
+    if(msg === "") return;
+
+    // Add user message
+    addMessage(msg, "user");
+    input.value = "";
+
+    // Show typing indicator
+    document.getElementById("typing-indicator").style.display = "flex";
+    scrollToBottom();
+
+    // Send to server using GET request
+    fetch("/get?message=" + encodeURIComponent(msg), {
+        method: "GET",
+        headers: {"Content-Type": "application/json"}
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("typing-indicator").style.display = "none";
+        addMessage(data.response, "bot");
+        
+        // Check for exit
+        if (data.exit) {
+            setTimeout(() => {
+                addMessage("👋 Goodbye! May peace be upon you!", "bot");
+            }, 500);
+        }
+    })
+    .catch(() => {
+        document.getElementById("typing-indicator").style.display = "none";
+        addMessage("Sorry, something went wrong. Please try again.", "bot");
+    });
+}
+
+function addMessage(text, sender) {
+    let chatBox = document.getElementById("chat-box");
+    let messageDiv = document.createElement("div");
+    messageDiv.className = `message ${sender}-message`;
+    messageDiv.innerHTML = `<p>${text}</p>`;
+    chatBox.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+function scrollToBottom() {
+    let chatBox = document.getElementById("chat-box");
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Allow sending with Enter key
+document.getElementById("user-input").addEventListener("keypress", function(e) {
+    if(e.key === "Enter") {
+        sendMessage();
+    }
+});
+</script>
+
+</body>
+</html>
+});
+</script>
+
+</body>
+</html>
