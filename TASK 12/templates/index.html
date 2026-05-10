@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Religion QnA Bot</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f7fb; color: #222; margin: 0; padding: 0; }
+    .container { max-width: 800px; margin: 40px auto; padding: 24px; background: #fff; border-radius: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
+    h1 { margin-top: 0; color: #1d3b73; }
+    textarea { width: 100%; min-height: 100px; padding: 14px; margin-top: 12px; border-radius: 10px; border: 1px solid #ccd6e0; resize: vertical; font-size: 16px; }
+    button { margin-top: 12px; padding: 12px 24px; border: none; border-radius: 10px; background: #1d3b73; color: white; font-size: 16px; cursor: pointer; }
+    button:hover { background: #17315d; }
+    .results { margin-top: 24px; }
+    .result-card { border: 1px solid #e1e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; background: #f9fbff; }
+    .result-card strong { display: block; margin-bottom: 8px; }
+    .score { color: #555; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Religion QnA Bot</h1>
+    <p>Ask a question about Islam, Christianity, Hinduism, Buddhism, Judaism, or Sikhism. The bot uses MiniLM embeddings and FAISS similarity search.</p>
+    <textarea id="query" placeholder="Type your question here..."></textarea>
+    <button id="askBtn">Ask the bot</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    document.getElementById('askBtn').addEventListener('click', async () => {
+      const query = document.getElementById('query').value.trim();
+      const resultsEl = document.getElementById('results');
+      resultsEl.innerHTML = '';
+      if (!query) {
+        resultsEl.innerHTML = '<p>Please type a question first.</p>';
+        return;
+      }
+      const response = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      const data = await response.json();
+      if (data.error) {
+        resultsEl.innerHTML = `<p>${data.error}</p>`;
+        return;
+      }
+      resultsEl.innerHTML = `<p><strong>Query:</strong> ${data.query}</p>`;
+      data.results.forEach((result, idx) => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `<strong>Answer ${idx + 1}</strong><div>${result.answer}</div><div class='score'>Match score: ${result.score.toFixed(4)}</div>`;
+        resultsEl.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
